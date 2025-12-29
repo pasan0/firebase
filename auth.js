@@ -1,26 +1,42 @@
-// Import Firebase
+// ===============================
+// IMPORT FIREBASE SDKs
+// ===============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged 
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Your Firebase config (PASTE YOURS HERE)
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// ===============================
+// FIREBASE CONFIG (YOUR PROJECT)
+// ===============================
 const firebaseConfig = {
   apiKey: "AIzaSyCrHOA7o1nDNxb903ykCCdEGDU553n2n4k",
   authDomain: "login-system-ce7b1.firebaseapp.com",
   projectId: "login-system-ce7b1",
-  appId: "1:587035786838:web:fa11a16c1c4162ecd105f7",
+  appId: "1:587035786838:web:fa11a16c1c4162ecd105f7"
 };
 
-// Initialize Firebase
+// ===============================
+// INITIALIZE FIREBASE
+// ===============================
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Signup
+// ===============================
+// SIGN UP FUNCTION
+// ===============================
 window.signup = function () {
   const email = document.getElementById("signupEmail").value;
   const password = document.getElementById("signupPassword").value;
@@ -29,12 +45,14 @@ window.signup = function () {
     .then(() => {
       window.location.href = "dashboard.html";
     })
-    .catch((error) => {
+    .catch(error => {
       alert(error.message);
     });
 };
 
-// Login
+// ===============================
+// LOGIN FUNCTION
+// ===============================
 window.login = function () {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
@@ -43,21 +61,68 @@ window.login = function () {
     .then(() => {
       window.location.href = "dashboard.html";
     })
-    .catch((error) => {
+    .catch(error => {
       alert(error.message);
     });
 };
 
-// Logout
+// ===============================
+// LOGOUT FUNCTION
+// ===============================
 window.logout = function () {
   signOut(auth).then(() => {
     window.location.href = "index.html";
   });
 };
 
-// Protect Dashboard
-onAuthStateChanged(auth, (user) => {
+// ===============================
+// AUTH PROTECTION
+// ===============================
+onAuthStateChanged(auth, user => {
   if (!user && window.location.pathname.includes("dashboard")) {
     window.location.href = "index.html";
   }
 });
+
+// ===============================
+// SAVE DASHBOARD FORM TO FIRESTORE
+// ===============================
+const form = document.getElementById("profileForm");
+
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const user = auth.currentUser;
+    if (!user) {
+      alert("User not logged in");
+      return;
+    }
+
+    const firstName = document.getElementById("firstName").value;
+    const lastName = document.getElementById("lastName").value;
+    const email = document.getElementById("email").value;
+    const mobile = document.getElementById("mobile").value;
+    const address = document.getElementById("address").value;
+    const dob = document.getElementById("dob").value;
+
+    const gender =
+      document.querySelector('input[name="gender"]:checked')?.value || "";
+
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        firstName,
+        lastName,
+        email,
+        mobile,
+        address,
+        gender,
+        dob
+      });
+
+      alert("Profile saved successfully");
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+}
