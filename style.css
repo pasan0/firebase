@@ -94,3 +94,23 @@
     font-size: 14px;
   }
 }
+
+form {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  text-align: left;
+}
+
+textarea {
+  width: 90%;
+  padding: 8px;
+}
+
+.radio-group {
+  text-align: left;
+  margin: 5px 0;
+}
