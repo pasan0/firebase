@@ -12,9 +12,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
+  collection,
   getFirestore,
-  doc,
-  setDoc
+  addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ===============================
@@ -110,14 +110,14 @@ if (form) {
       document.querySelector('input[name="gender"]:checked')?.value || "";
 
     try {
-      await setDoc(doc(db, "users", user.uid), {
+      await addDoc(collection(db, "users"), {
         firstName,
         lastName,
         email,
         mobile,
         address,
         gender,
-        dob
+        dob,
       });
 
       alert("Profile saved successfully");
@@ -126,3 +126,13 @@ if (form) {
     }
   });
 }
+
+//....................database rules....................//
+// rules_version = '2'; 
+// service cloud.firestore {
+//   match / databases / { database } / documents {
+//     match / { document=**} { 
+// allow read, write: if true;
+//     }
+//   }
+// }
