@@ -1,6 +1,6 @@
 /* Scoped login page styles */
 .login-page {
-  height: 100vh;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,10 +10,10 @@
 
 .login-page .container {
   background: #fff;
-  padding: 40px 30px;
+  padding: 60px 80px;
   border-radius: 15px;
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   text-align: center;
   transition: transform 0.3s ease;

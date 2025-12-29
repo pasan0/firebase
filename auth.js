@@ -1,6 +1,4 @@
-// ===============================
-// IMPORT FIREBASE SDKs
-// ===============================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
@@ -17,9 +15,7 @@ import {
   addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ===============================
-// FIREBASE CONFIG (YOUR PROJECT)
-// ===============================
+// FIREBASE CONFIG 
 const firebaseConfig = {
   apiKey: "AIzaSyCrHOA7o1nDNxb903ykCCdEGDU553n2n4k",
   authDomain: "login-system-ce7b1.firebaseapp.com",
@@ -27,16 +23,14 @@ const firebaseConfig = {
   appId: "1:587035786838:web:fa11a16c1c4162ecd105f7"
 };
 
-// ===============================
+
 // INITIALIZE FIREBASE
-// ===============================
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ===============================
-// SIGN UP FUNCTION
-// ===============================
+
 window.signup = function () {
   const email = document.getElementById("signupEmail").value;
   const password = document.getElementById("signupPassword").value;
@@ -50,9 +44,7 @@ window.signup = function () {
     });
 };
 
-// ===============================
-// LOGIN FUNCTION
-// ===============================
+
 window.login = function () {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
@@ -66,27 +58,40 @@ window.login = function () {
     });
 };
 
-// ===============================
-// LOGOUT FUNCTION
-// ===============================
+
 window.logout = function () {
   signOut(auth).then(() => {
     window.location.href = "index.html";
   });
 };
 
-// ===============================
+
 // AUTH PROTECTION
-// ===============================
-onAuthStateChanged(auth, user => {
-  if (!user && window.location.pathname.includes("dashboard")) {
-    window.location.href = "index.html";
+
+onAuthStateChanged(auth, (user) => {
+  const currentPage = window.location.pathname;
+
+  if (user) {
+    // If user is logged in
+    if (
+      currentPage.includes("index.html") ||
+      currentPage.includes("signup.html") ||
+      currentPage === "/" ||
+      currentPage === ""
+    ) {
+      window.location.href = "dashboard.html";
+    }
+  } else {
+    // If user is NOT logged in
+    if (currentPage.includes("dashboard.html")) {
+      window.location.href = "index.html";
+    }
   }
 });
 
-// ===============================
-// SAVE DASHBOARD FORM TO FIRESTORE
-// ===============================
+
+//FIRESTORE
+
 const form = document.getElementById("profileForm");
 
 if (form) {
@@ -121,6 +126,8 @@ if (form) {
       });
 
       alert("Profile saved successfully");
+      form.reset();
+
     } catch (error) {
       alert(error.message);
     }
@@ -128,10 +135,10 @@ if (form) {
 }
 
 //....................database rules....................//
-// rules_version = '2'; 
+// rules_version = '2';
 // service cloud.firestore {
 //   match / databases / { database } / documents {
-//     match / { document=**} { 
+//     match / { document=**} {
 // allow read, write: if true;
 //     }
 //   }
